@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+# ingress 에서 긁어갈 svc 정의
+metadata:
+  labels:
+    app: dev-svc-01
+  name: dev-svc-01
+spec:
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  # 긁어 올 pod 정의
+  selector:
+    app: dev-deployment-pod
+#  type: ClusterIP -> default 설정 : https://bit.ly/3xGyPyb

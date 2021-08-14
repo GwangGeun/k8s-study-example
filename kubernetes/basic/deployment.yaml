@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+# Deployment Description
+metadata:
+  labels:
+    app: dev-deployment
+  name: dev-deployment
+ spec:
+   replicas: 3
+   minReadySeconds: 0
+   # rc 가 아닌 rs 의 문법
+   selector:
+     matchLabels:
+       app: dev-deployment-pod
+   # Pods Template
+   template:
+     metadata:
+     # Service 에서 긁어갈 pod label 명 정의
+       lables:
+         app: dev-deployment-pod
+     spec:
+       containers:
+       # DockerHub 같은 곳에 배포된 docker Image
+       - image: xxxx
+       # imagePullPolicy 정책 참고 : https://bit.ly/2M002JQ
+         imagePullPolicy: "Always"
+         ports:
+         - containerPort: 8080
+         name: dev-deployment-pod
+         resources:
+           limits:
+             cpu: 500m
+             memory: 500Mi
+           # request 설정을 하지 않으면 default:0 으로 배포된다. 이 말은 즉슨 다른 자원들과의 경합에서 제일 후순위에 있다는 걸 의미한다.
+           requests:
+             cpu: 500m
+             memory: 500Mi
+         # 문제 생긴 pod 제외 : https://bit.ly/2VFQPeF
+         readinessProbe:
+           httpGet:
+             path: /hello
+             port: 8080
+           initialDelaySeconds: 5
+           periodSeconds: 10
+         # 문제 생긴 pod 재시작
+         livenessProbe:
+           httpGet:
+             path: /hello
+             port: 8080
+           initialDelaySeconds: 15
+           periodSeconds: 20

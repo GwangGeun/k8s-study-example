@@ -1,0 +1,22 @@
+# ingress 를 2개 이상 두고 L4 Layer 에서 로드밸런싱 하고 싶을 경우를 대비한 example
+# e.g) pod -> service -> ingress -> service (client 진입 포인트)
+kind: Service
+apiVersion: v1
+metadata:
+  name: xxx
+  namespace: ingress-nginx
+  annoations:
+    service.beta.kubernetes.io/openstack-internal-load-balancer: "true"
+# Service 정의
+spec:
+  externalTrafficPolicy: Local
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+    - name: https
+      port: 443
+      targetPort: 443

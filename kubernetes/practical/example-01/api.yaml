@@ -1,0 +1,48 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: api
+  namespace: service
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+ tls:
+   - hosts:
+       - "www.xxx01.com"
+     secretName: "..tls.."
+   - hosts:
+       - "www.xxx02.com"
+     secretName: "..tls.."
+ rules:
+   - host: "www.xxx01.com"
+     http:
+       paths:
+         - path: /
+           backend:
+             serviceName: svc-api
+             servicePort: 80
+   - host: "www.xxx02.com"
+     http:
+       paths:
+         - path: /
+           backend:
+             serviceName: svc-api
+             servicePort: 80
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-api
+  namespace: service
+  labels:
+    app: svc-api-service
+  spec:
+    ports:
+      - port: 80
+        name: http
+        targetPort: 8080
+    selector:
+      app: pod-api

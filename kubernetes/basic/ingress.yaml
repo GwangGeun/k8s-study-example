@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+# Ingress 정의
+metadata:
+  name: dev-ingress
+  # ssl 인증서 붙이면 필요없는 설정
+  annotations:
+    nginx.ingress.kubernates.io/ssl-redirect: "false"
+spec:
+  rules:
+  # 긁어올 svc 정의
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: dev-svc-01
+          servicePort: 8080
